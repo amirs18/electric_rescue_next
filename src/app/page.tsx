@@ -1,6 +1,6 @@
 import { serverClient } from "./_trpc/serverClient";
-
-import TodoList from "./_components/TodoList";
+import GetLocationButton from "@components/GetLocationButton"
+// import TodoList from "./_components/TodoList";
 import { Metadata } from "next";
 export const dynamic = 'force-dynamic'
 
@@ -11,10 +11,18 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   
-  const todos = await serverClient.getTodos();
+  // const todos = await serverClient.getTodos();
       return (
     <main className="max-w-3xl mx-auto mt-5">
-      <TodoList initialTodos={todos} />
-    </main>
+      <h1>
+        Welcome to <span
+      className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-500"
+      >Electric Rescue</span>
+	</h1>
+  <div className="flex justify-center p-8">
+    <button className="btn">Responsive</button>
+  </div>
+  <GetLocationButton/>
+      </main>
   );
 }
