@@ -6,7 +6,7 @@ import {
 } from "kysely";
 import path from "path";
 import { Pool } from "pg";
-import { Database } from "./src/db/schema";
+import { DB } from "./src/db/schema";
 import { promises as fs } from "fs";
 require('dotenv').config({ path: './.env.local' })
 
@@ -24,7 +24,7 @@ async function migrateToLatest() {
         ssl: process.env.NODE_ENV === 'production' ? true : false
       }),
     });
-    const db = new Kysely<Database>({
+    const db = new Kysely<DB>({
       dialect,
     });
     
