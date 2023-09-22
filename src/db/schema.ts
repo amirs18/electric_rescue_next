@@ -5,7 +5,6 @@ import {
   Selectable,
   Updateable,
 } from "kysely";
-import { type } from "os";
 
 
 export type Numeric = ColumnType<string, string | number, string | number>;

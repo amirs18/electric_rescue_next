@@ -1,4 +1,4 @@
-import { Database } from "./schema"; // this is the Database interface we defined earlier
+import { DB } from "./schema"; // this is the Database interface we defined earlier
 import { Pool } from "pg"; // this is the Pool interface we defined earlier
 import {
   Kysely,
@@ -20,7 +20,7 @@ const dialect = new PostgresDialect({
 // knows your database structure.
 // Dialect is passed to Kysely's constructor, and from now on, Kysely knows how
 // to communicate with your database.
-export const db = new Kysely<Database>({
+export const db = new Kysely<DB>({
   dialect,
 });
 
