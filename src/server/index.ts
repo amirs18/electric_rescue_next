@@ -8,10 +8,11 @@ import { TRPCError } from "@trpc/server";
   //   return new Promise((resolve) => setTimeout(resolve, ms));
 // }
 export const appRouter = createTRPCRouter({
-  // getTodos: publicProcedure.query(async (opts) => {
-  //       const todos = await db.selectFrom("todo").selectAll().execute();
-  //   return todos;
-  // }),
+  getMe: publicProcedure.input(z.string()).query(async (opts) => {
+    //TODO fix
+        const me = await db.selectFrom('User').selectAll().where("email","=",opts.ctx.session?.user?.email!).executeTakeFirst();
+    return me;
+  }),
   // addTodo: publicProcedure.input(z.custom<NewTodo>()).mutation(async (opts) => {
   //   await db.insertInto("todo").values(opts.input).executeTakeFirstOrThrow();
   //   return true;
