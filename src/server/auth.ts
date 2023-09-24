@@ -5,6 +5,8 @@ import {
 } from "next-auth";
 import auth0Provider from "next-auth/providers/auth0";
 import z from 'zod'
+import { db } from "@/db/database";
+import {KyselyAdapter} from "@auth/kysely-adapter";
 
 
 /**
@@ -13,38 +15,17 @@ import z from 'zod'
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: DefaultSession["user"] & {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    };
-  }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
 
 export const authOptions: NextAuthOptions = {
+  //@ts-ignore
+  adapter:KyselyAdapter(db),
   secret:process.env.AUTH0_SECRET,
-  callbacks: {
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
-  },
   providers: [
     auth0Provider({
       clientId: z.string().parse(process.env.AUTH0_CLIENT_ID),
       clientSecret: z.string().parse(process.env.AUTH0_CLIENT_SECRET),
       issuer:process.env.AUTH0_ISSUER_BASE_URL,
-      
     }),
     /**
      * ...add more providers here.
@@ -56,6 +37,7 @@ export const authOptions: NextAuthOptions = {
     * @see https://next-auth.js.org/providers/github
     */
   ],
+  
 };
 
 /**

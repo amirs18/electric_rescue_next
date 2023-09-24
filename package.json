@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/kysely-adapter": "^0.1.1",
+    "@auth/pg-adapter": "^0.2.0",
     "@auth0/nextjs-auth0": "^3.1.0",
     "@tanstack/react-query": "^4.32.6",
     "@trpc/client": "^10.38.0",
