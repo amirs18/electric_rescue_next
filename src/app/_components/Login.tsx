@@ -3,10 +3,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "@trpcProviders/client";
 
 export default function Login(){
-  const me = trpc.getMe.useQuery("hubub")
-    console.log("🚀 ~ file: Login.tsx:7 ~ Login ~ me:", me.data)
-    const { data: sessionData } = useSession();    
-return (<a
+  const { data: sessionData } = useSession();    
+  return (<a
     onClick={async () => {
       if (sessionData?.user) signOut();
       else signIn();

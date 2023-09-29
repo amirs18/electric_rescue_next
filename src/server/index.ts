@@ -1,18 +1,23 @@
 import { date, z } from "zod";
 import { priveteProcedure, publicProcedure, createTRPCRouter } from "./trpc";
 import { db } from "../db/database";
-import { User} from "@/db/schema";
+import { NewRequestRescue} from "@/db/schema";
 import { TRPCError } from "@trpc/server";
+
 
 // function delay(ms: number) {
   //   return new Promise((resolve) => setTimeout(resolve, ms));
 // }
 export const appRouter = createTRPCRouter({
-  getMe: publicProcedure.input(z.string()).query(async (opts) => {
+  getMe: publicProcedure.query(async (opts) => {
     //TODO fix
         const me = await db.selectFrom('User').selectAll().where("email","=",opts.ctx.session?.user?.email!).executeTakeFirst();
     return me;
   }),
+  addRescue: priveteProcedure.input(z.custom<NewRequestRescue>()).mutation(async (opts)=> {
+    await db.insertInto('RequestRescue').values(opts.input).executeTakeFirstOrThrow()
+    return true
+  })
   // addTodo: publicProcedure.input(z.custom<NewTodo>()).mutation(async (opts) => {
   //   await db.insertInto("todo").values(opts.input).executeTakeFirstOrThrow();
   //   return true;

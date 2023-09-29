@@ -1,43 +1,60 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useState, useCallback, useReducer } from "react";
+import { trpc } from "@trpcProviders/client";
+import { useSession } from "next-auth/react";
+import NoPremmisionsDialog from "./NoPremmisionsDialog";
 
-const rtl = { direction: "rtl" } as const;
 export default function GetLocationButton() {
+  const addRescue = trpc.addRescue.useMutation();
+  const me = trpc.getMe.useQuery(undefined, {
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
   const [prmessions, setPrmessions] = useState(true);
-
+  function rescueRequest  ()  {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        if (me.data)
+          addRescue.mutate({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            userId: me.data.id,
+          });
+        if (!prmessions) {
+          setPrmessions(true);
+        }
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          setPrmessions(false);
+        }
+      }
+    );
+  };
+  
   if (!prmessions) {
     return (
-      <dialog open id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg"style={rtl}>הרשאות מיקום</h3>
-          <p className="py-4 " style={rtl}>בבקשה אשר הרשאות מיקום לאתר זה</p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">הבנתי</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      <>
+        <NoPremmisionsDialog />
+        <button
+          onClick={() => {
+            rescueRequest();
+            //@ts-ignore
+            document.getElementById("my_modal_1").showModal();
+          }}
+          className="btn w-52 h-52 rounded-full"
+        >
+          חשמל אותי
+        </button>
+        ;
+      </>
     );
   }
-  if ("geolocation" in navigator) {
-    if (navigator.geolocation) {
-      console.log(navigator.geolocation);
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log(position.coords.latitude, position.coords.longitude);
-          if (!prmessions) {
-            setPrmessions(true);
-          }
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            setPrmessions(false);
-          }
-        }
-      );
-    }
-  }
+  return (
+    <button onClick={rescueRequest} className="btn w-52 h-52 rounded-full">
+      חשמל אותי
+    </button>
+  );
 }

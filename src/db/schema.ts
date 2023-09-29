@@ -60,6 +60,7 @@ export interface RequestRescue {
   latitude: Numeric;
   longitude: Numeric;
   userId: string;
+  //TODO add timestamp , optional text information , complete status update, and car number
 }
 export type SelectRequestRescue = Selectable<RequestRescue>;
 export type NewRequestRescue = Insertable<RequestRescue>;
