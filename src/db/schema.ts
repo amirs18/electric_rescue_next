@@ -6,6 +6,7 @@ import {
   Updateable,
 } from "kysely";
 export type Numeric = ColumnType<string, string | number, string | number>;
+type status = "pending" | "recived" | "on route" | "done" | "can`t be done"
 
 export interface Account {
   id: GeneratedAlways<string>;
@@ -60,7 +61,9 @@ export interface RequestRescue {
   latitude: Numeric;
   longitude: Numeric;
   userId: string;
-  //TODO add timestamp , optional text information , complete status update, and car number
+  timeStamp: Date
+  additionalInfo?:string 
+  status:status
 }
 export type SelectRequestRescue = Selectable<RequestRescue>;
 export type NewRequestRescue = Insertable<RequestRescue>;
