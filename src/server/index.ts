@@ -1,23 +1,58 @@
-import { date, z } from "zod";
+import { date, string, z } from "zod";
 import { priveteProcedure, publicProcedure, createTRPCRouter } from "./trpc";
 import { db } from "../db/database";
-import { NewRequestRescue} from "@/db/schema";
+import { NewRequestRescue } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
-
+import { getUserIDFromEamil } from "./utils/userUtils";
+import Email from "next-auth/providers/email";
+import { getServerAuthSession } from "./auth";
+import { use } from "react";
 
 // function delay(ms: number) {
-  //   return new Promise((resolve) => setTimeout(resolve, ms));
+//   return new Promise((resolve) => setTimeout(resolve, ms));
 // }
 export const appRouter = createTRPCRouter({
   getMe: publicProcedure.query(async (opts) => {
     //TODO fix
-        const me = await db.selectFrom('User').selectAll().where("email","=",opts.ctx.session?.user?.email!).executeTakeFirst();
+    const me = await db
+      .selectFrom("User")
+      .selectAll()
+      .where("email", "=", opts.ctx.session?.user?.email!)
+      .executeTakeFirst();
     return me;
   }),
-  addRescue: priveteProcedure.input(z.custom<NewRequestRescue>()).mutation(async (opts)=> {
-    await db.insertInto('RequestRescue').values(opts.input).executeTakeFirstOrThrow()
-    return true
-  })
+  makeMeAdmin: priveteProcedure.mutation(async (opts) => {
+    const usersession = await getServerAuthSession();
+    if (opts.ctx.session?.user?.email) {
+      const user = await getUserIDFromEamil(opts.ctx.session.user.email);
+      await db
+        .insertInto("UserRole")
+        .values({ userId: user.id, role: "admin" })
+        .onConflict((oc) => oc.column("userId").doUpdateSet({ role: "admin" }))
+
+        .execute();
+    }
+    if (usersession !== null) {
+      const user = await getUserIDFromEamil(usersession.user?.email!);
+      await db
+        .insertInto("UserRole")
+        .values({ userId: user.id, role: "admin" })
+        .onConflict((oc) => oc.column("userId").doUpdateSet({ role: "admin" }))
+        .execute();
+    }
+  }),
+  addRescue: priveteProcedure
+    .input(z.custom<NewRequestRescue>())
+    .mutation(async (opts) => {
+      await db
+        .insertInto("RequestRescue")
+        .values(opts.input)
+        .executeTakeFirstOrThrow();
+      return true;
+    }),
+    getAllRescues: priveteProcedure
+    .query(async (opts) =>  await db.selectFrom("RequestRescue").selectAll().execute()
+    ),
   // addTodo: publicProcedure.input(z.custom<NewTodo>()).mutation(async (opts) => {
   //   await db.insertInto("todo").values(opts.input).executeTakeFirstOrThrow();
   //   return true;

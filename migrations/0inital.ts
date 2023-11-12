@@ -1,7 +1,9 @@
 import { Kysely, sql } from "kysely";
+import { Database } from "@/db/schema";
 
 export async function up(db: Kysely<any>): Promise<void> {
-  await db.schema
+  await db.schema.createSchema('electric_rescue').execute()
+  await db.withSchema("electric_rescue").schema
     .createTable("User")
     .addColumn("id", "uuid", (col) =>
       col.primaryKey().defaultTo(sql`gen_random_uuid()`)
@@ -12,7 +14,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("image", "text")
     .execute();
 
-  await db.schema
+  await db.withSchema("electric_rescue").schema
     .createTable("Account")
     .addColumn("id", "uuid", (col) =>
       col.primaryKey().defaultTo(sql`gen_random_uuid()`)
@@ -32,7 +34,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("session_state", "text")
     .execute();
 
-  await db.schema
+  await db.withSchema("electric_rescue").schema
     .createTable("Session")
     .addColumn("id", "uuid", (col) =>
       col.primaryKey().defaultTo(sql`gen_random_uuid()`)
@@ -44,20 +46,20 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("expires", "timestamptz", (col) => col.notNull())
     .execute();
 
-  await db.schema
+  await db.withSchema("electric_rescue").schema
     .createTable("VerificationToken")
     .addColumn("identifier", "text", (col) => col.notNull())
     .addColumn("token", "text", (col) => col.notNull().unique())
     .addColumn("expires", "timestamptz", (col) => col.notNull())
     .execute();
 
-  await db.schema
+  await db.withSchema("electric_rescue").schema
     .createIndex("Account_userId_index")
     .on("Account")
     .column("userId")
     .execute();
 
-  await db.schema
+  await db.withSchema("electric_rescue").schema
     .createIndex("Session_userId_index")
     .on("Session")
     .column("userId")
@@ -65,8 +67,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable("Account").ifExists().execute();
-  await db.schema.dropTable("Session").ifExists().execute();
-  await db.schema.dropTable("User").ifExists().execute();
-  await db.schema.dropTable("VerificationToken").ifExists().execute();
+  await db.withSchema("electric_rescue").schema.dropTable("Account").ifExists().execute();
+  await db.withSchema("electric_rescue").schema.dropTable("Session").ifExists().execute();
+  await db.withSchema("electric_rescue").schema.dropTable("User").ifExists().execute();
+  await db.withSchema("electric_rescue").schema.dropTable("VerificationToken").ifExists().execute();
+  await db.schema.dropSchema('electric_rescue').ifExists().execute()
 }

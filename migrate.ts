@@ -3,6 +3,7 @@ import {
   Kysely,
   Migrator,
   FileMigrationProvider,
+  NO_MIGRATIONS,
 } from "kysely";
 import path from "path";
 import { Pool } from "pg";
@@ -33,12 +34,16 @@ async function migrateToLatest() {
       provider: new FileMigrationProvider({
         fs,
         path,
-        // This needs to be an absolute path.
         migrationFolder: path.join(__dirname, "./migrations"),
       }),
     });
-    const m = await migrator.getMigrations();
-    console.log(m);
+    if (process.env.RESET_DATABASE==='1'){
+      // db.schema.dropTable('kysely_migrations').execute()
+      const { error ,results}= await migrator.migrateTo(NO_MIGRATIONS)
+      console.log("🚀 ~ file: migrate.ts:43 ~ migrateToLatest ~ error:", error)
+      console.log("🚀 ~ file: migrate.ts:43 ~ migrateToLatest ~ results:", results)
+    }
+
     const { error, results } = await migrator.migrateToLatest();
     
     results?.forEach((it) => {

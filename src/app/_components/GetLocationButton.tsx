@@ -20,6 +20,8 @@ export default function GetLocationButton() {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             userId: me.data.id,
+            status:'pending',
+            timeStamp: new Date()
           });
         if (!prmessions) {
           setPrmessions(true);

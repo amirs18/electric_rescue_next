@@ -25,6 +25,7 @@ export async function createTRPCContext(opts?: FetchCreateContextFnOptions) {
   return { session };
 }
 export const isAuthenticated = t.middleware(({ ctx, next }) => {
+  if(getServerAuthSession() !== null) return next()
   if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

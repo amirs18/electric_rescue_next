@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
     auth0Provider({
       clientId: z.string().parse(process.env.AUTH0_CLIENT_ID),
       clientSecret: z.string().parse(process.env.AUTH0_CLIENT_SECRET),
-      issuer:process.env.AUTH0_ISSUER_BASE_URL,
+      issuer:z.string().url().parse(process.env.AUTH0_ISSUER_BASE_URL)
     }),
   ],
   

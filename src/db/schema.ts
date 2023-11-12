@@ -68,6 +68,13 @@ export interface RequestRescue {
 export type SelectRequestRescue = Selectable<RequestRescue>;
 export type NewRequestRescue = Insertable<RequestRescue>;
 export type RequestRescueUpdate = Updateable<RequestRescue>;
+export interface UserRole {
+  userId: string;
+  role: "admin" | "superuser"| "regular"| "operator" 
+}
+export type SelectUserRole = Selectable<UserRole>;
+export type NewUserRole = Insertable<UserRole>;
+export type UserRoleUpdate = Updateable<UserRole>;
 
 export interface Database {
   Account: Account;
@@ -75,4 +82,5 @@ export interface Database {
   RequestRescue: RequestRescue;
   User: User;
   VerificationToken: VerificationToken;
+  UserRole:UserRole
 }
