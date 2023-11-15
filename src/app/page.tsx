@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 };
 export default async function Home() {
   const session = await getServerSession(authOptions)
-  console.log("🚀 ~ file: page.tsx:14 ~ Home ~ session:", session)
   return (
     <main className=" mx-10 mt-5">
       <h1 className="prose text-center text-4xl">
@@ -20,10 +19,10 @@ export default async function Home() {
           Electric Rescue
         </span>
       </h1>
-      <div className="flex justify-center p-8">
+      <div className="flex flex-col items-center justify-center p-8">
       <GetLocationButton />
-      </div>
       <Login />
+      </div>
     </main>
   );
 }
