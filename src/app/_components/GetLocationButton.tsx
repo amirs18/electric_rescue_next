@@ -1,10 +1,18 @@
 "use client";
-import { useState, useCallback, useReducer } from "react";
+import { useState, useCallback, useReducer, ChangeEvent } from "react";
 import { trpc } from "@trpcProviders/client";
 import { useSession } from "next-auth/react";
 import NoPremmisionsDialog from "./NoPremmisionsDialog";
+import { useDebounce } from "use-debounce";
 
 export default function GetLocationButton() {
+  const [phoneValue, setInputValue] = useState("");
+  const [debouncedValue] = useDebounce(phoneValue, 500);
+
+  const handleInputChange = (event:ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+  };
   const addRescue = trpc.addRescue.useMutation();
   const me = trpc.getMe.useQuery(undefined, {
     refetchOnReconnect: false,
@@ -54,9 +62,16 @@ export default function GetLocationButton() {
     );
   }
 
-  return (
-    <button onClick={rescueRequest} className="btn w-52 h-52 rounded-full">
+  return ( <>
+  <div className="p-6 form-control w-full max-w-xs">
+  <label className="label">
+    <span className="label-text">Phone number</span>
+  </label>
+  <input type="text" placeholder="050-0000000" value={phoneValue} onChange={handleInputChange} className="input input-bordered w-full max-w-xs" />
+</div>
+    <button onClick={rescueRequest} className="p-6 btn w-52 h-52 rounded-full">
       חשמל אותי
     </button>
+  </>
   );
 }
