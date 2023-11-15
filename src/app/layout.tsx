@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="cyberpunk">
+    <html lang="en" data-theme="forest">
       <body className={inter.className}>
         <SessionProvider>
           <Provider>{children}</Provider>

@@ -18,7 +18,7 @@ const config: Config = {
     },
   },
   daisyui:{
-    themes: ["light", "dark", "aqua","cyberpunk"],
+    themes: ["forest"],
   },
   plugins: [typography,daisyui],
 }
