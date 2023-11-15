@@ -1,5 +1,5 @@
-import React from "react";
-const rtl = { direction: "rtl" } as const;
+import React from 'react';
+const rtl = { direction: 'rtl' } as const;
 
 export default function NoPremmisionsDialog() {
   return (

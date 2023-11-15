@@ -1,12 +1,18 @@
 import {
   ColumnType,
+  Generated,
   GeneratedAlways,
   Insertable,
   Selectable,
   Updateable,
-} from "kysely";
+} from 'kysely';
 export type Numeric = ColumnType<string, string | number, string | number>;
-type status = "pending" | "recived" | "on route" | "done" | "can`t be done"
+export type status =
+  | 'pending'
+  | 'recived'
+  | 'on route'
+  | 'done'
+  | 'can`t be done';
 
 export interface Account {
   id: GeneratedAlways<string>;
@@ -58,19 +64,22 @@ export type NewVerificationToken = Insertable<VerificationToken>;
 export type VerificationTokenUpdate = Updateable<VerificationToken>;
 
 export interface RequestRescue {
+  id: Generated<number>;
   latitude: Numeric;
   longitude: Numeric;
   userId: string;
-  timeStamp: Date
-  additionalInfo?:string 
-  status:status
+  timeStamp: Date;
+  additionalInfo?: string;
+  phoneNumber: string;
+  status: status;
+  updatedAt: Date;
 }
 export type SelectRequestRescue = Selectable<RequestRescue>;
 export type NewRequestRescue = Insertable<RequestRescue>;
 export type RequestRescueUpdate = Updateable<RequestRescue>;
 export interface UserRole {
   userId: string;
-  role: "admin" | "superuser"| "regular"| "operator" 
+  role: 'admin' | 'superuser' | 'regular' | 'operator';
 }
 export type SelectUserRole = Selectable<UserRole>;
 export type NewUserRole = Insertable<UserRole>;
@@ -82,5 +91,5 @@ export interface Database {
   RequestRescue: RequestRescue;
   User: User;
   VerificationToken: VerificationToken;
-  UserRole:UserRole
+  UserRole: UserRole;
 }

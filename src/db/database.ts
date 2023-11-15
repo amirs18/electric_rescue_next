@@ -1,6 +1,6 @@
-import { Database } from "./schema"; // this is the Database interface we defined earlier
-import { Pool } from "pg"; // this is the Pool interface we defined earlier
-import { Kysely, PostgresDialect } from "kysely";
+import { Database } from './schema'; // this is the Database interface we defined earlier
+import { Pool } from 'pg'; // this is the Pool interface we defined earlier
+import { Kysely, PostgresDialect } from 'kysely';
 
 export const pool = new Pool({
   database: process.env.POSTGRES_DATABASE,
@@ -11,7 +11,7 @@ export const pool = new Pool({
     ? undefined
     : parseInt(process.env.POSTGRES_PORT as string),
   max: 10,
-  ssl: process.env.NODE_ENV === "production" ? true : false,
+  ssl: process.env.NODE_ENV === 'production' ? true : false,
 });
 const dialect = new PostgresDialect({
   pool,
@@ -19,4 +19,4 @@ const dialect = new PostgresDialect({
 
 export const db = new Kysely<Database>({
   dialect,
-}).withSchema("electric_rescue");
+}).withSchema('electric_rescue');
