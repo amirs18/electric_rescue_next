@@ -4,51 +4,55 @@ import {
   createColumnHelper,
   getCoreRowModel,
   flexRender,
+  Headers,
 } from "@tanstack/react-table";
-import { Metadata } from "next";
 import { trpc } from "@trpcProviders/client";
 import { SelectRequestRescue } from "@/db/schema";
-import { info } from "console";
 const columnHelper = createColumnHelper<SelectRequestRescue>();
 
 const columns = [
-  columnHelper.accessor("additionalInfo", {
-    header: "test",
+  columnHelper.accessor((row) => row.additionalInfo, {
+    header: "additionalInfo",
+    cell: (info) => <span>{info.getValue()}</span>,
     footer: (info) => info.column.id,
   }),
-  columnHelper.accessor("latitude", {
-    header: "test",
+  columnHelper.accessor((row)=>row.latitude, {
+    header: "latitude",
+    cell: (info) => <span>{info.getValue()}</span>,
     footer: (latitude) => latitude.column.id,
   }),
-  columnHelper.accessor("longitude", {
-    header: "test",
+  columnHelper.accessor((row)=>row.longitude, {
+    header: "longitude",
+    cell: (info) => <span>{info.getValue()}</span>,
     footer: (longitude) => longitude.column.id,
   }),
-  columnHelper.accessor("status", {
-    header: "test",
+  columnHelper.accessor((row)=>row.status, {
+    header: "status",
+    cell: (info) => <span>{info.getValue()}</span>,
     footer: (status) => status.column.id,
   }),
-  columnHelper.accessor('timeStamp', {
-    cell: info=>info.getValue(),
-    header: "test",
+  columnHelper.accessor((row)=>row.timeStamp, {
+    header: "timeStamp",
+    cell: (info) => <span>{info.getValue().getTime()}</span>,
     footer: (timeStamp) => timeStamp.column.id,
   }),
-  columnHelper.accessor("userId", {
-    header: "test",
+  columnHelper.accessor((row)=>row.userId, {
+    header: "userId",
+    cell: (info) => <span>{info.getValue()}</span>,
     footer: (userId) => userId.column.id,
   }),
 ];
 export default function TableView() {
-  const data = trpc.getAllRescues.useQuery().data!;
+  const data = trpc.getAllRescues.useQuery().data;
   const table = useReactTable({
-    data,
-    columns,
+    data: data ??[] ,
+    columns:columns ??[],
     getCoreRowModel: getCoreRowModel(),
   });
   return (
     <>
       <div>TableView</div>
-      <table>
+      <table className="table">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
