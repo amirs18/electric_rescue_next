@@ -7,6 +7,7 @@ import { getUserIDFromEamil } from "./utils/userUtils";
 import Email from "next-auth/providers/email";
 import { getServerAuthSession } from "./auth";
 import { use } from "react";
+import { getAllRequestsWithUserData } from "@/db/functions";
 
 // function delay(ms: number) {
 //   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -50,8 +51,11 @@ export const appRouter = createTRPCRouter({
         .executeTakeFirstOrThrow();
       return true;
     }),
-    getAllRescues: priveteProcedure
-    .query(async (opts) =>  await db.selectFrom("RequestRescue").selectAll().execute()
+    getAllRescues: priveteProcedure.input(z.object({
+      limit:z.number(),
+      offset:z.number()
+    }))
+    .query(async (opts) =>  getAllRequestsWithUserData(opts.input.offset,opts.input.limit)
     ),
   // addTodo: publicProcedure.input(z.custom<NewTodo>()).mutation(async (opts) => {
   //   await db.insertInto("todo").values(opts.input).executeTakeFirstOrThrow();
