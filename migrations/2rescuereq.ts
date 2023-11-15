@@ -1,7 +1,7 @@
 import { Kysely, sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
-  db.withSchema("electric_rescue").schema
+  db.schema
     .createTable("RequestRescue")
     .addColumn("latitude", "numeric", (col) => col.notNull())
     .addColumn("longitude", "numeric", (col) => col.notNull())
@@ -14,5 +14,5 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 }
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.withSchema("electric_rescue").schema.dropTable("RequestRescue").ifExists().execute();
+  await db.schema.dropTable("RequestRescue").ifExists().execute();
 }

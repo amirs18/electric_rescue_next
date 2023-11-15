@@ -2,7 +2,7 @@ import { Kysely, sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
   await db
-    .withSchema("electric_rescue")
+    
     .schema.createTable("UserRole")
     .addColumn("userId", "uuid", (col) =>
       col.references("User.id").unique().onDelete("cascade").notNull()
@@ -12,7 +12,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 export async function down(db: Kysely<any>): Promise<void> {
   await db
-    .withSchema("electric_rescue")
+    
     .schema.dropTable("UserRole")
     .cascade()
     .ifExists()
