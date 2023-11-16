@@ -5,12 +5,14 @@ import {
   getCoreRowModel,
   flexRender,
   Headers,
+  SortingState,
+  getSortedRowModel,
 } from '@tanstack/react-table';
+import { useState } from 'react';
 import { trpc } from '@trpcProviders/client';
-import { SelectRequestRescue, status } from '@/db/schema';
 import { getAllRequestsWithUserData } from '@/db/functions';
-import { redirect } from 'next/dist/server/api-utils';
 import z from 'zod';
+import { status } from '@/db/schema';
 
 const selectOptions = {
   pending: 'pending',
@@ -29,6 +31,8 @@ const statusColor = {
 } as const;
 
 export default function TableView() {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const getAllRescues = trpc.getAllRescues.useQuery({ limit: 50, offset: 0 });
 
   const setStatus = trpc.setStatus.useMutation({
@@ -44,26 +48,31 @@ export default function TableView() {
   const columns = [
     columnHelper.accessor(row => row.id, {
       header: 'id',
+      sortingFn: 'auto',
       cell: info => <span>{info.getValue()}</span>,
       footer: info => info.column.id,
     }),
     columnHelper.accessor(row => row.phoneNumber, {
       header: 'phoneNumber',
+      sortingFn: 'auto',
       cell: info => <span>{info.getValue()}</span>,
       footer: info => info.column.id,
     }),
     columnHelper.accessor(row => row.updatedAt, {
       header: 'updatedAt',
+      sortingFn: 'auto',
       cell: info => <span>{info.getValue().getTime()}</span>,
       footer: info => info.column.id,
     }),
     columnHelper.accessor(row => row.additionalInfo, {
       header: 'additionalInfo',
+      sortingFn: 'auto',
       cell: info => <span>{info.getValue()}</span>,
       footer: info => info.column.id,
     }),
     columnHelper.accessor(row => row.latitude + ',' + row.longitude, {
       header: 'cord',
+      sortingFn: 'auto',
       cell: info => (
         <span>
           <a
@@ -79,6 +88,7 @@ export default function TableView() {
     }),
     columnHelper.accessor(row => row.status, {
       header: 'status',
+      sortingFn: 'auto',
       cell: info => (
         <select
           onChange={e => {
@@ -101,10 +111,12 @@ export default function TableView() {
     }),
     columnHelper.accessor(row => row.timeStamp, {
       header: 'timeStamp',
+      sortingFn: 'auto',
       cell: info => <span>{info.getValue().getTime()}</span>,
       footer: timeStamp => timeStamp.column.id,
     }),
     columnHelper.accessor(row => row.name, {
+      sortingFn: 'auto',
       header: 'name',
       cell: info => <span>{info.getValue()}</span>,
       footer: name => name.column.id,
@@ -113,7 +125,13 @@ export default function TableView() {
   const table = useReactTable({
     data: getAllRescues.data ?? [],
     columns: columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    enableSorting: true,
   });
   return (
     <>
@@ -123,7 +141,15 @@ export default function TableView() {
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th key={header.id}>
+                <th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className={
+                    header.column.getCanSort()
+                      ? 'cursor-pointer select-none'
+                      : ''
+                  }
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
